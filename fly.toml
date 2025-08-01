@@ -1,5 +1,5 @@
 app = "bitcoin-ml"
-primary_region = "ams"
+primary_region = "mad"
 
 [build]
 
