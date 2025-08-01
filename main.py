@@ -5,6 +5,7 @@ from fastapi.templating import Jinja2Templates
 from joblib import load
 from fastapi import HTTPException
 from binance import get_binance_input_row
+import requests
 import pandas as pd
 import json
 
@@ -43,3 +44,11 @@ async def predict():
         raise  # vuelve a lanzar el error tal cual
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/test")
+def test():
+    try:
+        r = requests.get("https://api.binance.com/api/v3/ping", timeout=3)
+        return {"status": r.status_code, "content": r.text}
+    except requests.RequestException as e:
+        return {"status": "error", "message": str(e)}
