@@ -1,0 +1,179 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@100..900&family=Playwrite+HU:wght@100..400&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <title>BTC / USDT</title>
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.png">
+    <style>
+        h1{
+            
+            font-family: "Bitcount Prop Single", system-ui;
+            font-weight: 300;
+            color:rgb(255, 234, 0)
+        }
+        body{
+            background: linear-gradient(to right, #000000, #363636);
+            color:#FFF;
+            font-family: "Poppins", sans-serif;
+            font-size:.8em
+        }
+        button{
+            background-color: #FFF;
+            color: #000000;
+            border: none;
+            padding: 5px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .precio{
+            margin: 0px;
+            color: rgb(255, 234, 0);
+        }
+        #predicion_value{
+            font-size: 1.2em;
+            color: #FFF;
+            margin-top: 20px;
+            background-color: #ffffffd8;
+            padding:3px 10px;
+            border-radius: 5px;
+            color: #363636;
+            border: 1px solid #FFF;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            margin-top: 20px;
+        }
+
+        thead {
+            background-color: #ffffff84;
+            
+        }
+
+        th, td {
+            text-align: center;
+            padding: 3px 12px;
+        }
+
+
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        th {
+            font-weight: bold;
+            color: rgb(251, 251, 251);
+        }
+    </style>
+</head>
+<body>
+    <h1><img src="https://logos-world.net/wp-content/uploads/2020/08/Bitcoin-Logo.png" alt="" style="width: 50px;margin-right: -12px;margin-top: 10px;margin-bottom: -7px;"> Smart Bitcoin Sell Signals – Predict Market Drops with AI</h1>
+    <div style="display: flex; height: 100vh;">
+        <div style="width: 75%">
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container" style="width: 100%;float:left;border:2px solid #FFF;">
+                <div id="tradingview_15m"></div>
+            </div>
+            <h3>Project summary</h3>
+            <p>This project aims to support Bitcoin savers by helping them make more informed decisions about when to sell and rebuy the same amount of Bitcoin after a price drop. The objective is to minimize losses and optimize asset accumulation through strategic timing.</p>
+            <p>Two modeling approaches were explored: <b>Logistic Regression</b> and <b>XGBoost</b>, as well as <b>ensemble combinations</b> of both. After careful evaluation, <b>XGBoost</b> emerged as the most effective model, offering superior performance in capturing relevant market patterns.</p>
+            <p>To enhance the reliability of predictions, a <b>custom decision threshold of 70%</b> was introduced to define a "drop" scenario. This deliberate choice reduces false positives, thereby improving <b>precision</b>—an essential factor given the nature of the decision: if the model signals a drop, the user is expected to sell. While this adjustment comes at the cost of <b>recall</b> (some actual drops may not be predicted), it aligns with the project's core priority: <b>trustworthy alerts</b> when action is needed.</p>
+            <p>In essence, the model favors <b>high-confidence signals</b> over quantity, ensuring that when it predicts a fall, it's more likely to be right—protecting the user from unnecessary trades and fostering more efficient re-entry into the market.</p>
+            <h3 style="margin: 0px;">Model scores</h3>
+            <table border="1" cellpadding="5" cellspacing="0" style="font-size: .9em;width:60%;margin-left: 20%;">
+                <thead>
+                    <tr>
+                    <th>Class</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1-Score</th>
+                    <th>Support</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="color:#eb7070">
+                    <td>No sign</td>
+                    <td>0.6893</td>
+                    <td>0.9748</td>
+                    <td>0.8075</td>
+                    <td>2064</td>
+                    </tr>
+                    <tr style="color: #6bf5a4;">
+                    <td>Price drop</td>
+                    <td>0.8360</td>
+                    <td>0.2261</td>
+                    <td>0.3559</td>
+                    <td>1172</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br><br><br>
+        </div>
+        <div style="width: 25%; padding:0px 20px">
+            <button id="predict_button" style="display: none;">Predecir</button> 
+            <p style="margin:0px;font-size:.8em;margin-top:0px">Current price</p>
+            <h1 class="precio" ></h1>
+            La predicción es:<br><b id="predicion_value"></b>
+            <p id="data_value"></p>
+            
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+        new TradingView.widget({
+        "width": "100%",
+        "height": 500,
+        "symbol": "BINANCE:BTCUSDT",
+        "interval": "15",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "enable_publishing": false,
+        "withdateranges": true,
+        "hide_side_toolbar": false,
+        "allow_symbol_change": false,
+        "container_id": "tradingview_15m"
+        });
+    </script>
+    <!-- TradingView Widget END -->
+     
+    <script>
+        function refresh() {
+        $.ajax({
+            url: "/predict",
+            type: "POST",
+            data: JSON.stringify({}),
+            contentType: "application/json",
+                success: function(data) {
+                    console.log("Devolución",data);
+                    $(".precio").html("USD "+data.data.close_0)
+                    $("#predicion_value").html(data.prediction==0?`<a style="color:#E69F91">No sign</a>(P/ ${(data.probability*100).toFixed(2)}%)`:`<a style="color:#91E6AF">Price drop</a>(P/ ${(data.probability*100).toFixed(2)}%)`);
+                    txt=''
+                    for (const key in data.data) {
+                        txt+=`${key.replace('_0','')}: ${data.data[key]}<br>`;
+                    }
+                    $('#data_value').html(`Datos de entrada:<br>${txt}`);
+                },
+                error: function() {
+                    alert("Error al realizar la predicción.");
+                }
+            });
+        }
+        
+        //$("#predict_button").click(refresh);
+        $(window).on('load',function() {
+            refresh();
+            setInterval(() => {
+                refresh();
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
