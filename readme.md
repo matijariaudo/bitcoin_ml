@@ -7,6 +7,8 @@ To enhance the reliability of predictions, a custom decision threshold of 70% wa
 
 In essence, the model favors high-confidence signals over quantity, ensuring that when it predicts a fall, it's more likely to be right—protecting the user from unnecessary trades and fostering more efficient re-entry into the market.
 
+See demo: http://18.230.227.217:8000/
+
 Model scores
 | Class       | Precision | Recall  | F1-Score | Support |
 |-------------|-----------|---------|----------|---------|
