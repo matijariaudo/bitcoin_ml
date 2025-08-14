@@ -1,0 +1,12 @@
+#Paro el contenedor
+docker stop bitcoin-container
+docker rm bitcoin-container
+
+#Actualizo el git
+git pull
+
+#Creo un nuevo contenedro
+docker build -t bitcoin-app .
+
+#Se levanta nuevamente
+docker run -d --name bitcoin-container -p 8000:8000 bitcoin-app
