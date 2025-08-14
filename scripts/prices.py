@@ -12,8 +12,12 @@ import sqlite3
 current_data={} #variable para tener en memoria los datos actuales de predicción de binance
 
 ############################### Database - SQLite ###############################################
-DB_PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
-DB_FILE_PATH = f'../database.db'
+# Carpeta donde está este archivo
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Subir una carpeta
+parent_dir = os.path.dirname(current_dir)
+# Construir la ruta al archivo database.db
+DB_FILE_PATH = os.path.join(parent_dir, "database", "database.db")
 
 ############################### Cargar modelos ###############################
 xgb_model = load('models/xgb_model_24.pkl')
@@ -31,21 +35,22 @@ async def timer():
             prob = float(data["probability"])
             precio= float(data['current_price'])
             fecha = float(data["open_time"])  
-            with sqlite3.connect(DB_FILE_PATH) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    """
-                    INSERT INTO predictions (fecha, precio, precio_min_4h, prediction, probability) 
-                    VALUES (:fecha, :precio, 0, :pred, :prob)
-                    ON CONFLICT(fecha) DO UPDATE SET precio = :precio;
-                    """,
-                    {"fecha": fecha, "precio": precio, "pred": pred, "prob": prob}
-                )
-                conn.commit()
-            ##Guardar precio + bajo
-            #print("Precio: ",precio)
+            print(f"Nuevo precioooo->{precio} , {fecha}, {prob}")
+            try:
+                with sqlite3.connect(DB_FILE_PATH) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        """
+                        INSERT INTO predictions (fecha, precio, precio_min_4h, prediction, probability) 
+                        VALUES (:fecha, :precio, 0, :pred, :prob)
+                        ON CONFLICT(fecha) DO UPDATE SET precio = :precio;
+                        """,
+                        {"fecha": fecha, "precio": precio, "pred": pred, "prob": prob}
+                    )
+                    a=conn.commit()
+            except Exception as e:
+                print("Error al insertar:", e)
             savePrice(precio)
-            ##Enviar email
             send_signal_emails()    
         await asyncio.sleep(10)  # espera 1 minuto
 
