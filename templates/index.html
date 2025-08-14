@@ -1,179 +1,388 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@100..900&family=Playwrite+HU:wght@100..400&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <title>BTC / USDT</title>
-    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.png">
-    <style>
-        h1{
-            
-            font-family: "Bitcount Prop Single", system-ui;
-            font-weight: 300;
-            color:rgb(255, 234, 0)
-        }
-        body{
-            background: linear-gradient(to right, #000000, #363636);
-            color:#FFF;
-            font-family: "Poppins", sans-serif;
-            font-size:.8em
-        }
-        button{
-            background-color: #FFF;
-            color: #000000;
-            border: none;
-            padding: 5px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .precio{
-            margin: 0px;
-            color: rgb(255, 234, 0);
-        }
-        #predicion_value{
-            font-size: 1.2em;
-            color: #FFF;
-            margin-top: 20px;
-            background-color: #ffffffd8;
-            padding:3px 10px;
-            border-radius: 5px;
-            color: #363636;
-            border: 1px solid #FFF;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: Arial, sans-serif;
-            margin-top: 20px;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bitcoin ML Predictor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    :root{ --brand:#FCB92A; --soft:#f8fafc; }
+    body{background:var(--soft); color:#0b1220;}
 
-        thead {
-            background-color: #ffffff84;
-            
-        }
+    /* HERO sin recuadro */
+    .hero{ position:relative; min-height:72vh; display:grid; place-items:center; overflow:hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.96) 0%, rgba(248,250,252,.85) 10%, rgba(248,250,252,1) 100%),
+        url('https://media.istockphoto.com/id/1730452078/photo/candle-stick-graph-chart.jpg?s=612x612&w=0&k=20&c=kYd5Y-I0f37ysOT2WxIZ1EPl2MZLEPMSsHy14_Ii7XU=');
+      background-size:cover; background-position:center; }
+    .hero .hero-content{ text-align:center; max-width:760px; padding:2rem 1rem; }
 
-        th, td {
-            text-align: center;
-            padding: 3px 12px;
-        }
+    .navbar{backdrop-filter:saturate(120%) blur(6px);} 
+    .btn-brand{background:#000; color:#fff; border-radius:999px; padding:.65rem 1.1rem;}
+    .btn-brand:hover{background:#111}
+    .btn-outline-brand{border-color:#000; color:#000; border-radius:999px}
 
-
-        tr:hover {
-            background-color: #f0f0f0;
-        }
-
-        th {
-            font-weight: bold;
-            color: rgb(251, 251, 251);
-        }
-    </style>
+    .metric{border-radius:1rem; background:#fff; box-shadow:0 1px 0 rgba(2,8,23,.03), 0 20px 50px -20px rgba(2,8,23,.25);} 
+    .badge-up{background:var(--brand); color:#001b10}
+    .badge-down{background:#ffe1e1; color:#8a0016}
+    .shadow-soft{box-shadow: 0 10px 30px rgba(2,8,23,.08)}
+    .table thead th{border-bottom:1px solid #e6e8ee; color:#475569; font-weight:600;}
+    #tradingview_15m {
+        border: none !important;
+        box-shadow: none !important;
+    }
+  </style>
 </head>
 <body>
-    <h1><img src="https://logos-world.net/wp-content/uploads/2020/08/Bitcoin-Logo.png" alt="" style="width: 50px;margin-right: -12px;margin-top: 10px;margin-bottom: -7px;"> Smart Bitcoin Sell Signals – Predict Market Drops with AI</h1>
-    <div style="display: flex; height: 100vh;">
-        <div style="width: 75%">
-            <!-- TradingView Widget BEGIN -->
-            <div class="tradingview-widget-container" style="width: 100%;float:left;border:2px solid #FFF;">
-                <div id="tradingview_15m"></div>
-            </div>
-            <h3>Project summary</h3>
-            <p>This project aims to support Bitcoin savers by helping them make more informed decisions about when to sell and rebuy the same amount of Bitcoin after a price drop. The objective is to minimize losses and optimize asset accumulation through strategic timing.</p>
-            <p>Two modeling approaches were explored: <b>Logistic Regression</b> and <b>XGBoost</b>, as well as <b>ensemble combinations</b> of both. After careful evaluation, <b>XGBoost</b> emerged as the most effective model, offering superior performance in capturing relevant market patterns.</p>
-            <p>To enhance the reliability of predictions, a <b>custom decision threshold of 70%</b> was introduced to define a "drop" scenario. This deliberate choice reduces false positives, thereby improving <b>precision</b>—an essential factor given the nature of the decision: if the model signals a drop, the user is expected to sell. While this adjustment comes at the cost of <b>recall</b> (some actual drops may not be predicted), it aligns with the project's core priority: <b>trustworthy alerts</b> when action is needed.</p>
-            <p>In essence, the model favors <b>high-confidence signals</b> over quantity, ensuring that when it predicts a fall, it's more likely to be right—protecting the user from unnecessary trades and fostering more efficient re-entry into the market.</p>
-            <h3 style="margin: 0px;">Model scores</h3>
-            <table border="1" cellpadding="5" cellspacing="0" style="font-size: .9em;width:60%;margin-left: 20%;">
-                <thead>
-                    <tr>
-                    <th>Class</th>
-                    <th>Precision</th>
-                    <th>Recall</th>
-                    <th>F1-Score</th>
-                    <th>Support</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="color:#eb7070">
-                    <td>No sign</td>
-                    <td>0.6893</td>
-                    <td>0.9748</td>
-                    <td>0.8075</td>
-                    <td>2064</td>
-                    </tr>
-                    <tr style="color: #6bf5a4;">
-                    <td>Price drop</td>
-                    <td>0.8360</td>
-                    <td>0.2261</td>
-                    <td>0.3559</td>
-                    <td>1172</td>
-                    </tr>
-                </tbody>
-            </table>
-            <br><br><br>
-        </div>
-        <div style="width: 25%; padding:0px 20px">
-            <button id="predict_button" style="display: none;">Predecir</button> 
-            <p style="margin:0px;font-size:.8em;margin-top:0px">Current price</p>
-            <h1 class="precio" ></h1>
-            La predicción es:<br><b id="predicion_value"></b>
-            <p id="data_value"></p>
-            
-        </div>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg bg-white sticky-top border-[#DEDEDE]">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8XRBw1onr6L5s7Q9rzpMMICi1WHwYOuUNsQ&s" style="width:30px;"> <b style="color:var(--brand)">BTC</b>Predictor</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+          <li class="nav-item"><a class="nav-link" href="#predicciones">Predicciones</a></li>
+          <li class="nav-item"><a class="btn btn-brand" href="#suscripcion"><i class="bi bi-bell"></i> Quiero alertas</a></li>
+        </ul>
+      </div>
     </div>
-    
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-    <script type="text/javascript">
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-content text-dark">
+      <h1 class="display-5 fw-bold mb-3">Predice el próximo movimiento de <span style="color:var(--brand)">Bitcoin</span></h1>
+      <p class="lead mb-4">Modelo de Machine Learning que evalúa señales en tiempo real y te avisa por email cuando detecta <strong>señal positiva</strong>.</p>
+      <div class="d-flex gap-3 justify-content-center">
+        <a href="#predicciones" class="btn btn-brand" style="background-color: #FCB92A;color:#000">Ver señales ahora</a>
+        <a href="#suscripcion" class="btn btn-brand">Suscribirme</a>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- METRICS -->
+  <section class="container my-5">
+    <div class="row g-4">
+      <div class="row p-0 col-md-8 offset-md-2 col-12">
+        <div class="col-12 col-md-4">
+            <div class="metric p-4">
+            <div class="small text-secondary">Precio Actual</div>
+            <div class="fs-3 fw-bold" id="mSignals">—</div>
+            <div class="text-secondary small">Dolares</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="metric p-4">
+            <div class="small text-secondary">Señal de venta</div>
+            <div class="fs-3 fw-bold" id="sSignalProm">83%</div>
+            <div class="text-secondary small" id="sSignal">Basado en backtests</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="metric p-4">
+            <div class="small text-secondary">Tiempo de refresco</div>
+            <div class="fs-3 fw-bold">15 min</div>
+            <div class="text-secondary small">Ventana de evaluación</div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREDICTIONS TABLE -->
+  <section id="predicciones" class="container mb-5">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="h4 m-0">Predicciones recientes</h2>
+      <div class="d-flex gap-2">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="onlyPositive">
+          <label class="form-check-label" for="onlyPositive">Solo positivas</label>
+        </div>
+        <button class="btn btn-sm btn-outline-secondary" id="refreshBtn">Refrescar</button>
+      </div>
+    </div>
+
+    <div class="table-responsive shadow-soft rounded-4 bg-white p-3">
+      <table class="table align-middle m-0">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Price</th>
+            <th>Lowest Price</th>
+            <th>GAP</th>
+            <th>GAP[%]</th>
+            <th>Señal</th>
+            <th>Confianza</th>
+          </tr>
+        </thead>
+        <tbody id="predBody"></tbody>
+      </table>
+    </div>
+  </section>
+    <section id="graph" class="container mb-5">
+        <div class="p-2 p-lg-4 rounded-4 bg-white shadow-soft">
+            <div id="tradingview_15m" style="border-radius: 10px;border:0px"></div>
+        </div>
+    </section>
+
+  <!-- SUBSCRIPTION BANNER -->
+  <section id="suscripcion" class="container mb-5">
+    <div class="p-4 p-lg-5 rounded-4 bg-white shadow-soft d-lg-flex align-items-center justify-content-between">
+      <div class="mb-3 mb-lg-0">
+        <h3 class="h4 mb-1">¿Querés recibir un email cuando haya señal positiva?</h3>
+        <p class="text-secondary m-0">Suscribite gratis. Cancelás cuando quieras.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <input type="email" class="form-control" id="emailInput" placeholder="tu@email.com">
+        <button class="btn btn-brand" id="quickSubBtn">Suscribirme</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-top py-4 shadow bg-white border-white">
+    <div class="container d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>© <span id="year"></span> Made by <b>Matías Ariaudo</b></div>
+      <div class="small">Made with Bootstrap 5 + jQuery || Python</div>
+    </div>
+  </footer>
+
+  <!-- SUBSCRIBE MODAL -->
+  <div class="modal fade" id="subscribeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Crear alerta por email</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" id="email" class="form-control" placeholder="tu@email.com">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Umbral de confianza (señal positiva)</label>
+            <input type="range" class="form-range" id="threshold" min="50" max="95" step="1" value="70">
+            <div class="small text-secondary">Notificar cuando prob.↑ ≥ <span id="thLabel">70</span>%</div>
+          </div>
+          <div class="row g-3">
+            <div class="col-6">
+              <label class="form-label">Horizonte</label>
+              <select id="horizon" class="form-select">
+                <option>15 min</option>
+                <option>1 h</option>
+                <option>6 h</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label">Frecuencia</label>
+              <select id="freq" class="form-select">
+                <option value="once">Una vez</option>
+                <option value="daily">Diaria</option>
+                <option value="always">Siempre</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-brand" id="saveSub">Guardar alerta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index:1080">
+    <div id="liveToast" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastMsg">Listo.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+   <script type="text/javascript">
         new TradingView.widget({
         "width": "100%",
         "height": 500,
         "symbol": "BINANCE:BTCUSDT",
         "interval": "15",
         "timezone": "Etc/UTC",
-        "theme": "dark",
+        "theme": "light",
         "style": "1",
         "locale": "en",
         "enable_publishing": false,
         "withdateranges": true,
         "hide_side_toolbar": false,
         "allow_symbol_change": false,
-        "container_id": "tradingview_15m"
-        });
-    </script>
-    <!-- TradingView Widget END -->
-     
-    <script>
-        function refresh() {
-        $.ajax({
-            url: "/predict",
-            type: "POST",
-            data: JSON.stringify({}),
-            contentType: "application/json",
-                success: function(data) {
-                    console.log("Devolución",data);
-                    $(".precio").html("USD "+data.data.close_0)
-                    $("#predicion_value").html(data.prediction==0?`<a style="color:#E69F91">No sign</a>(P/ ${(data.probability*100).toFixed(2)}%)`:`<a style="color:#91E6AF">Price drop</a>(P/ ${(data.probability*100).toFixed(2)}%)`);
-                    txt=''
-                    for (const key in data.data) {
-                        txt+=`${key.replace('_0','')}: ${data.data[key]}<br>`;
-                    }
-                    $('#data_value').html(`Datos de entrada:<br>${txt}`);
-                },
-                error: function() {
-                    alert("Error al realizar la predicción.");
-                }
-            });
+        "container_id": "tradingview_15m",
+        "toolbar_bg": "#ffffff",
+          // aseguramos que esté el estudio para poder sobreescribirlo
+        //#studies: ["Volume@tv-basicstudies"],
+
+        overrides: {
+            "paneProperties.background": "#ffffff",
+            "paneProperties.backgroundType": "solid",
+            "paneProperties.vertGridProperties.color": "rgba(0,0,0,0.06)",
+            "paneProperties.horzGridProperties.color": "rgba(0,0,0,0.06)",
+            "scalesProperties.textColor": "#6b7280",
+
+            // Velas
+            "mainSeriesProperties.candleStyle.upColor": "#F2B030",
+            "mainSeriesProperties.candleStyle.borderUpColor": "#F2B030",
+            "mainSeriesProperties.candleStyle.wickUpColor": "#F2B030",
+            "mainSeriesProperties.candleStyle.downColor": "#45320E",
+            "mainSeriesProperties.candleStyle.borderDownColor": "#45320E",
+            "mainSeriesProperties.candleStyle.wickDownColor": "#45320E"
+        },
+
+        // Colores del volumen (más claritos)
+        studies_overrides: {
+            "volume.volume.color.0": "rgba(69,50,14,0.25)",   // down
+            "volume.volume.color.1": "rgba(242,176,48,0.25)", // up
+            "volume.volume.transparency": 60                  // 0-100 (más alto = más claro)
         }
-        
-        //$("#predict_button").click(refresh);
-        $(window).on('load',function() {
-            refresh();
-            setInterval(() => {
-                refresh();
-            }, 1500);
         });
     </script>
+
+<script>
+  // ===== Demo data (reemplazar con tu API) =====
+  function formatTimestamp(ts) {
+    const fecha = new Date(ts);
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    const anio = fecha.getFullYear();
+    const horas = fecha.getHours().toString().padStart(2, '0');
+    const minutos = fecha.getMinutes().toString().padStart(2, '0');
+    return `${dia}/${mes}/${anio} ${horas}:${minutos}`;
+}
+  function mockPredictions(){
+    const now = new Date();
+    const items = [];
+    for(let i=0;i<12;i++){
+      const d = new Date(now.getTime()-i*15*60*1000);
+      const pUp = Math.round(40 + Math.random()*60);
+      const pDn = 100 - pUp;
+      const conf = Math.round(60 + Math.random()*35);
+      const signal = pUp >= 60 ? 'Positiva' : (pDn >= 60 ? 'Negativa' : 'Neutra');
+      items.push({date:d, horizon:'6 h', pUp, pDn, signal, confidence:conf});
+    }
+    return items;
+  }
+
+  
+
+  function badge(signal){
+    if(signal==='Positiva') return `<span class="badge badge-up">Positiva</span>`;
+    if(signal==='Negativa') return `<span class="badge badge-down">Negativa</span>`;
+    return `<span class="badge text-bg-secondary">Neutra</span>`;
+  }
+
+  const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+  function showToast(msg){ $('#toastMsg').text(msg); toast.show(); }
+
+  $(function(){
+    $('#year').text(new Date().getFullYear());
+    let data = mockPredictions();
+    
+    $('#refreshBtn').on('click', ()=>{ $('#predBody').html('Cargando data..');setTimeout(function(){fillTable();},1000) });
+    $('#onlyPositive').on('change', ()=> renderTable(data));
+
+    $('#threshold').on('input', function(){ $('#thLabel').text(this.value); });
+
+    $('#saveSub').on('click', function(){
+      const payload = {
+        email: $('#email').val(),
+        threshold: Number($('#threshold').val()),
+        horizon: $('#horizon').val(),
+        frequency: $('#freq').val(),
+        positive_only: true
+      };
+      if(!payload.email){ showToast('Ingresá tu email'); return; }
+      // $.post('/api/subscribe', payload)
+      showToast('Alerta creada para ' + payload.email);
+      bootstrap.Modal.getInstance(document.getElementById('subscribeModal')).hide();
+    });
+
+    
+
+    $.ajax({
+    url: "/prediction",
+    method: "GET",
+    dataType: "json",
+    success: function(data) {
+        console.log("Datos recibidos:", data);
+        $('#mSignals').text("$ "+data.close_0);
+        $('#sSignalProm').text("% "+ (data.prediction_prob*100).toFixed(2))
+        $('#sSignalProm').parent('div').css('background',data.prediction==1?'rgba(242,176,48,.8)':'white');
+        // Ejemplo: mostrar el precio de cierre
+        console.log("Precio cierre:", data.close_0);
+
+        // Si querés recorrer todas las claves y valores
+        $.each(data, function(key, value) {
+            console.log(key + ": " + value);
+        });
+    },
+    error: function(xhr, status, error) {
+        console.error("Error en la solicitud:", error);
+    }});
+    function fillTable(){
+        $('#predBody').html('')
+        $.ajax({
+        url: "/predictionlist",
+        method: "GET",
+        dataType: "json",
+        success: function(data) {
+        const onlyPos = $('#onlyPositive').is(':checked'); 
+        const rows = data
+        .filter(x => !onlyPos || x.signal==='Positiva')
+        .map(x => `
+            <tr>
+            <td>${formatTimestamp(x.date)}</td>
+            <td>${x.price}</td>
+            <td>${x.lowest_price}</td>
+            <td>${(x.price-x.lowest_price).toFixed(2)}</td>
+            <td>${((x.price-x.lowest_price)/x.price*100).toFixed(2)}%</td>
+            <td>${badge(x.prediction==1?'Positiva':'Neutra')}</td>
+            <td>${(x.prediction_prob*100).toFixed(2)}%</td>
+            </tr>`).join('');
+            $('#predBody').html(rows || `<tr><td colspan="7" class="text-center text-secondary py-4">Sin datos</td></tr>`);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error en la solicitud:", error);
+        }});
+    }
+    fillTable()
+    $("#quickSubBtn").on("click", function(e) {
+        let email = $("#emailInput").val().trim();
+        alert(email)
+        $.ajax({
+            url: "/suscribirse",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ email: email }),
+            success: function(response) {
+                if (response.ok) {
+                    alert("✅ " + response.msg);
+                } else {
+                    alert("⚠️ " + response.msg);
+                }
+            },
+            error: function(xhr) {
+                alert("❌ Error en la solicitud: " + xhr.responseText);
+            }
+        });
+    });
+  });
+
+
+</script>
+
 </body>
 </html>
