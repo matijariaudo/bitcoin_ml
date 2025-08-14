@@ -8,6 +8,9 @@ import time
 import os
 import sqlite3 
 
+############################### Global var ###############################################
+current_data={} #variable para tener en memoria los datos actuales de predicción de binance
+
 ############################### Database - SQLite ###############################################
 DB_PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 DB_FILE_PATH = f'../database.db'
@@ -141,3 +144,7 @@ def send_signal_emails():
         print(f"[send_signal_emails] Error general: {e}")
 
 #### fin codigo nuevo###
+
+def getPrices():
+    global current_data
+    return current_data

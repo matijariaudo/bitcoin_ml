@@ -9,7 +9,7 @@ import time
 import os
 #Código propio
 import scripts.database #crea la bd si no existe
-from scripts.prices import start_timer
+from scripts.prices import start_timer, getPrices
 
 ############################### Database - SQLite ###############################################
 DB_PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
@@ -17,7 +17,7 @@ DB_FILE_PATH = f'{DB_PATH}database{os.sep}database.db'
 
 ############################### Inicio API ##############################################
 
-current_data={} #variable para tener en memoria los datos actuales de predicción de binance
+
 app = FastAPI()
 
 # Static & Templates (como Flask)
@@ -64,8 +64,8 @@ def unsubscribe(email: str = Query(default="")):
 
 @app.get("/prediction")
 def sendPrediction():
-    global current_data
-    return JSONResponse(current_data,status_code=200)
+    
+    return JSONResponse(getPrices(),status_code=200)
 
 @app.get('/predictionlist')
 async def getList():
@@ -83,8 +83,7 @@ def functionA():
 
 @app.get("/test")
 def test():
-    global current_data
-    return {"status": r.status_code, "content": r.text, "data":current_data}
+    return {"status": r.status_code, "content": r.text, "data":getPrices()}
 
 
 
