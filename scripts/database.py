@@ -3,7 +3,7 @@ import os
 import sqlite3
 
 DB_PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
-DB_FILE_PATH = f'{DB_PATH}database{os.sep}database.db'
+DB_FILE_PATH = f'../database.db'
 print("CHEQUEANDO LA BD --->",DB_FILE_PATH)  # Ver ruta completa
 
 #### codigo nuevo### (creación de tablas de suscriptores y envíos)
