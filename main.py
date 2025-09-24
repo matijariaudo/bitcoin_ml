@@ -67,14 +67,44 @@ def sendPrediction():
     
     return JSONResponse(getPrices(),status_code=200)
 
+from datetime import datetime, timedelta
+
 @app.get('/predictionlist')
 async def getList():
+    cutoff_timestamp = int(time.time()) - 60*60*24   # hace 24 horas
+    cutoff_datetime = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+
     with sqlite3.connect(DB_FILE_PATH) as conn:
-        data=conn.execute(f"Select * from predictions where fecha>={int(time.time()-60*60*24)}").fetchall()
-    send=[]
-    for i in data:
-        send.append({"id":i[0],"date":i[1],"price":i[2],"lowest_price":i[3],"prediction":i[4],"prediction_prob":i[5]})
-    return JSONResponse(content=send,status_code=200)
+        conn.row_factory = sqlite3.Row  # para acceder por nombre de columna
+        cur = conn.cursor()
+
+        try:
+            # si fecha es timestamp INTEGER
+            cur.execute(
+                "SELECT * FROM predictions WHERE fecha >= ? ORDER BY fecha DESC LIMIT 20",
+                (cutoff_timestamp,)
+            )
+            data = cur.fetchall()
+        except Exception:
+            # si fecha es DATETIME string
+            cur.execute(
+                "SELECT * FROM predictions WHERE fecha >= ? ORDER BY fecha DESC LIMIT 20",
+                (cutoff_datetime,)
+            )
+            data = cur.fetchall()
+
+    send = [
+        {
+            "id": row["id"],
+            "date": row["fecha"],
+            "price": row["price"],
+            "lowest_price": row["lowest_price"],
+            "prediction": row["prediction"],
+            "prediction_prob": row["prediction_prob"]
+        }
+        for row in data
+    ]
+    return JSONResponse(content=send, status_code=200)
 
 @app.on_event("startup")
 def functionA():
